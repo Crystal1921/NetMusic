@@ -12,9 +12,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -68,10 +71,16 @@ public class MusicToClientMessage {
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void playMusic(MusicToClientMessage message, String url) {
-        final URL urlFinal;
+    private static void playMusic(MusicToClientMessage message, String url){
+        URL urlFinal;
         try {
-            urlFinal = new URL(url);
+            // 如果包含协议，则认为是网络地址
+            if (url.contains("://")) {
+                urlFinal = new URL(url);
+            } else { // 否则认为是本地路径
+                File file = new File(url);
+                urlFinal = file.toURL();
+            }
             NetMusicSound sound = new NetMusicSound(message.pos, urlFinal, message.timeSecond);
             Minecraft.getInstance().submitAsync(() -> {
                 Minecraft.getInstance().getSoundManager().play(sound);

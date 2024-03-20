@@ -19,5 +19,8 @@
   "gui.netmusic.cd_burner.id.tips": "输入歌曲ID",
   "gui.netmusic.cd_burner.no_music_id": "歌曲ID不能为空，请输入数字形式的歌曲ID！",
   "gui.netmusic.cd_burner.music_id_error": "歌曲ID必须为数字，请输入数字形式的歌曲ID！",
-  "gui.netmusic.cd_burner.get_info_error": "无法获取歌曲信息，请检查歌曲ID或者网络！"
+  "gui.netmusic.cd_burner.get_info_error": "无法获取歌曲信息，请检查歌曲ID或者网络！",
+  "gui.netmusic.cd_burner.net": "网络",
+  "gui.netmusic.cd_burner.local": "本地",
+  "gui.netmusic.cd_burner.file_error": "文件路径无效"
 }

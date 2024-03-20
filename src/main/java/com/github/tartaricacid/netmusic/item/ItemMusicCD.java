@@ -5,6 +5,9 @@ import com.github.tartaricacid.netmusic.api.pojo.NetEaseMusicSong;
 import com.github.tartaricacid.netmusic.init.InitItems;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
+import javazoom.jl.decoder.Bitstream;
+import javazoom.jl.decoder.BitstreamException;
+import javazoom.jl.decoder.Header;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +22,15 @@ import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ItemMusicCD extends Item {
     public static final String SONG_INFO_TAG = "NetMusicSongInfo";
@@ -132,6 +143,15 @@ public class ItemMusicCD extends Item {
             this.artists = track.getArtists();
         }
 
+        public SongInfo(String songUrl, int songTime) {
+            this.songUrl = songUrl;
+            this.songTime = songTime;//正正好好9分43秒
+            this.songName = getFileName(songUrl);
+            this.transName = this.songName;
+            this.vip = false;
+            this.artists = Collections.emptyList();
+        }
+
         public SongInfo(CompoundTag tag) {
             this.songUrl = tag.getString("url");
             this.songName = tag.getString("name");
@@ -146,6 +166,17 @@ public class ItemMusicCD extends Item {
                 ListTag tagList = tag.getList("artists", Tag.TAG_STRING);
                 this.artists = Lists.newArrayList();
                 tagList.forEach(nbt -> this.artists.add(nbt.getAsString()));
+            }
+        }
+
+        public static String getFileName(String filePath) {
+            // 定义正则表达式，匹配路径中最后的文件名
+            Pattern pattern = Pattern.compile("[^\\\\/]+\\.\\w+$");
+            Matcher matcher = pattern.matcher(filePath);
+            if (matcher.find()) {
+                return matcher.group();
+            } else {
+                return "Null";
             }
         }
 
