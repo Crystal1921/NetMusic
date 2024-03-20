@@ -19,7 +19,11 @@ import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ItemMusicCD extends Item {
     public static final String SONG_INFO_TAG = "NetMusicSongInfo";
@@ -132,6 +136,15 @@ public class ItemMusicCD extends Item {
             this.artists = track.getArtists();
         }
 
+        public SongInfo(String songUrl) {
+            this.songUrl = songUrl;
+            this.songTime = 583;//正正好好9分43秒
+            this.songName = getFileName(songUrl);
+            this.transName = this.songName;
+            this.vip = false;
+            this.artists = Collections.emptyList();
+        }
+
         public SongInfo(CompoundTag tag) {
             this.songUrl = tag.getString("url");
             this.songName = tag.getString("name");
@@ -146,6 +159,21 @@ public class ItemMusicCD extends Item {
                 ListTag tagList = tag.getList("artists", Tag.TAG_STRING);
                 this.artists = Lists.newArrayList();
                 tagList.forEach(nbt -> this.artists.add(nbt.getAsString()));
+            }
+        }
+
+        public static String getFileName(String filePath) {
+            // 定义正则表达式，匹配路径中最后的文件名
+            Pattern pattern = Pattern.compile("[^\\\\/]+\\.\\w+$");
+
+            // 创建 Matcher 对象，并进行匹配
+            Matcher matcher = pattern.matcher(filePath);
+
+            // 查找匹配项
+            if (matcher.find()) {
+                return matcher.group();
+            } else {
+                return "Null";
             }
         }
 
