@@ -22,13 +22,10 @@ import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-<<<<<<< HEAD
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-=======
->>>>>>> 9a52d9a4cc48f9f11166f85833af81f3e2d35676
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -146,15 +143,9 @@ public class ItemMusicCD extends Item {
             this.artists = track.getArtists();
         }
 
-<<<<<<< HEAD
         public SongInfo(String songUrl, int songTime) {
             this.songUrl = songUrl;
             this.songTime = songTime;//正正好好9分43秒
-=======
-        public SongInfo(String songUrl) {
-            this.songUrl = songUrl;
-            this.songTime = 583;//正正好好9分43秒
->>>>>>> 9a52d9a4cc48f9f11166f85833af81f3e2d35676
             this.songName = getFileName(songUrl);
             this.transName = this.songName;
             this.vip = false;
@@ -181,15 +172,7 @@ public class ItemMusicCD extends Item {
         public static String getFileName(String filePath) {
             // 定义正则表达式，匹配路径中最后的文件名
             Pattern pattern = Pattern.compile("[^\\\\/]+\\.\\w+$");
-<<<<<<< HEAD
             Matcher matcher = pattern.matcher(filePath);
-=======
-
-            // 创建 Matcher 对象，并进行匹配
-            Matcher matcher = pattern.matcher(filePath);
-
-            // 查找匹配项
->>>>>>> 9a52d9a4cc48f9f11166f85833af81f3e2d35676
             if (matcher.find()) {
                 return matcher.group();
             } else {

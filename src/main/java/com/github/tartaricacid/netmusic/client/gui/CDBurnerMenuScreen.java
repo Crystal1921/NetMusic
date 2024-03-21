@@ -96,7 +96,6 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
 
     private void updateMode(MODE mode) {
         this.mode = mode;
-<<<<<<< HEAD
         this.textField.setValue("");
         switch (mode){
             case LOCAL -> {
@@ -107,12 +106,6 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
                 this.timeField.setVisible(false);
                 this.textField.setMaxLength(19);
             }
-=======
-        if (mode == MODE.LOCAL) {
-            this.textField.setMaxLength(65536);
-        }else {
-            this.textField.setMaxLength(19);
->>>>>>> 9a52d9a4cc48f9f11166f85833af81f3e2d35676
         }
     }
 
@@ -139,7 +132,6 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
                 }
             }
             case LOCAL -> {
-<<<<<<< HEAD
                 String string = textField.getValue();
                 int time;
                 try{
@@ -159,11 +151,6 @@ public class CDBurnerMenuScreen extends AbstractContainerScreen<CDBurnerMenu> {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-=======
-                String string = textField.getValue().toString();
-                ItemMusicCD.SongInfo songInfo = new ItemMusicCD.SongInfo(string);
-                NetworkHandler.CHANNEL.sendToServer(new SetMusicIDMessage(songInfo));
->>>>>>> 9a52d9a4cc48f9f11166f85833af81f3e2d35676
             }
         }
     }
