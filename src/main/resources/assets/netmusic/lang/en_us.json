@@ -20,7 +20,10 @@
   "gui.netmusic.cd_burner.no_music_id": "The song ID cannot be empty, please enter the song ID as a number!",
   "gui.netmusic.cd_burner.music_id_error": "The song ID format is incorrect,  please enter the song ID as a number!",
   "gui.netmusic.cd_burner.get_info_error": "The song information cannot be obtained, please check the song ID or network",
+<<<<<<< HEAD
   "gui.netmusic.cd_burner.file_error": "The file location cannot be obtained",
+=======
+>>>>>>> 9a52d9a4cc48f9f11166f85833af81f3e2d35676
   "gui.netmusic.cd_burner.net": "Net",
   "gui.netmusic.cd_burner.local": "Local"
 }
