@@ -4,6 +4,7 @@ import com.github.tartaricacid.netmusic.compat.tlm.init.CompatRegistry;
 import com.github.tartaricacid.netmusic.network.message.GetMusicListMessage;
 import com.github.tartaricacid.netmusic.network.message.MusicToClientMessage;
 import com.github.tartaricacid.netmusic.network.message.SetMusicIDMessage;
+import com.github.tartaricacid.netmusic.network.message.SetPlayModeMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +23,7 @@ public class NetworkHandler {
         registrar.playToClient(MusicToClientMessage.TYPE, MusicToClientMessage.STREAM_CODEC, MusicToClientMessage::handle);
         registrar.playToClient(GetMusicListMessage.TYPE, GetMusicListMessage.STREAM_CODEC, GetMusicListMessage::handle);
         registrar.playToServer(SetMusicIDMessage.TYPE, SetMusicIDMessage.STREAM_CODEC, SetMusicIDMessage::handle);
+        registrar.playToServer(SetPlayModeMessage.TYPE, SetPlayModeMessage.STREAM_CODEC, SetPlayModeMessage::handle);
 
         CompatRegistry.initNetwork(registrar);
     }

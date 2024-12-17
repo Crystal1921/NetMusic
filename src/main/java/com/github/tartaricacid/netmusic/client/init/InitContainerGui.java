@@ -1,5 +1,7 @@
 package com.github.tartaricacid.netmusic.client.init;
 
+import com.github.tartaricacid.netmusic.inventory.AdvancedPlayerMenu;
+import com.github.tartaricacid.netmusic.client.gui.AdvancedPlayerScreen;
 import com.github.tartaricacid.netmusic.client.gui.CDBurnerMenuScreen;
 import com.github.tartaricacid.netmusic.client.gui.ComputerMenuScreen;
 import com.github.tartaricacid.netmusic.compat.tlm.init.CompatRegistry;
@@ -16,6 +18,7 @@ public class InitContainerGui {
     public static void clientSetup(RegisterMenuScreensEvent event) {
         event.register(CDBurnerMenu.TYPE, CDBurnerMenuScreen::new);
         event.register(ComputerMenu.TYPE, ComputerMenuScreen::new);
+        event.register(AdvancedPlayerMenu.TYPE, AdvancedPlayerScreen::new);
         CompatRegistry.initContainerScreen(event);
     }
 }

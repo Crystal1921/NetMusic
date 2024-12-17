@@ -23,11 +23,13 @@ public class InitItems {
     public static DeferredItem<Item> MUSIC_PLAYER = ITEMS.register("music_player", ItemMusicPlayer::new);
     public static DeferredItem<Item> CD_BURNER = ITEMS.register("cd_burner", () -> new BlockItem(InitBlocks.CD_BURNER.get(), new Item.Properties().stacksTo(1)));
     public static DeferredItem<Item> COMPUTER = ITEMS.register("computer", () -> new BlockItem(InitBlocks.COMPUTER.get(), new Item.Properties().stacksTo(1)));
+    public static DeferredItem<Item> ADVANCED_PLAYER = ITEMS.register("advanced_music_player", () -> new BlockItem(InitBlocks.ADVANCED_MUSIC_PLAYER.get(), new Item.Properties().stacksTo(1)));
     public static DeferredItem<Item> MUSIC_PLAYER_BACKPACK = ITEMS.register("music_player_backpack", () -> new Item(new Item.Properties().stacksTo(1)));
 
     public static DeferredHolder<CreativeModeTab, CreativeModeTab> NET_MUSIC_TAB = TABS.register("netmusic", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.netmusic"))
             .icon(() -> new ItemStack(InitBlocks.MUSIC_PLAYER.get())).displayItems((parameters, output) -> {
                         output.accept(new ItemStack(MUSIC_PLAYER.get()));
+                        output.accept(ADVANCED_PLAYER.get());
                         output.accept(new ItemStack(InitItems.CD_BURNER.get()));
                         output.accept(new ItemStack(InitItems.COMPUTER.get()));
                         CompatRegistry.initCreativeModeTab(output);

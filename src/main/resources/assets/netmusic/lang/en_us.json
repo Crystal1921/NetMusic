@@ -14,6 +14,7 @@
   "block.netmusic.computer": "Computer",
   "block.netmusic.computer.web_link.desc": "You can use any network link, Only supports mp3 format",
   "block.netmusic.computer.local_file.desc": "You can also use the local file path, but then only you can hear the music",
+  "block.netmusic.advanced_player": "Advanced Player",
   "message.netmusic.music_player.need_vip": "This song is a VIP song and cannot be played",
   "subtitle.netmusic.block.music_player": "Music Player Sound",
   "command.netmusic.music_cd.reload.success": "All CD is reloaded!",
@@ -42,5 +43,13 @@
   "gui.netmusic.computer.time.tips": "Time (s)",
   "gui.netmusic.computer.time.empty": "The song time cannot be empty",
   "gui.netmusic.computer.time.not_number": "The song time format is incorrect, please enter the song time as a number!",
+  "gui.netmusic.advanced_player.mode": "Mode",
+  "gui.netmusic.advanced_player.single_recycle": "Single",
+  "gui.netmusic.advanced_player.list_recycle": "List",
+  "gui.netmusic.advanced_player.random": "Random",
+  "gui.netmusic.advanced_player.is_playing": "Is Playing",
+  "gui.netmusic.advanced_player.on": "On",
+  "gui.netmusic.advanced_player.off": "Off",
+  "gui.netmusic.advanced_player.confirm": "Confirm",
   "jei.netmusic.altar_craft.item_craft.result": "Craft Item"
 }
