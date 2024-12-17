@@ -106,8 +106,7 @@ public class BlockMusicPlayer extends HorizontalDirectionalBlock implements Enti
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
-        builder.add(CYCLE);
+        builder.add(FACING, CYCLE);
     }
 
     @Nullable
@@ -122,6 +121,7 @@ public class BlockMusicPlayer extends HorizontalDirectionalBlock implements Enti
         return true;
     }
 
+    @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos blockPos) {
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
         if (blockEntity instanceof TileEntityMusicPlayer te) {
