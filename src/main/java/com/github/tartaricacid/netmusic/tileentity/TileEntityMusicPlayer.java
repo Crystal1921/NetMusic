@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,6 +22,8 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+
+import static com.github.tartaricacid.netmusic.block.BlockMusicPlayer.CYCLE;
 
 public class TileEntityMusicPlayer extends BlockEntity {
     public static final BlockEntityType<TileEntityMusicPlayer> TYPE = BlockEntityType.Builder.of(TileEntityMusicPlayer::new, InitBlocks.MUSIC_PLAYER.get()).build(null);
@@ -128,8 +131,19 @@ public class TileEntityMusicPlayer extends BlockEntity {
     public static void tick(Level level, BlockPos blockPos, BlockState blockState, TileEntityMusicPlayer te) {
         te.tickTime();
         if (0 < te.getCurrentTime() && te.getCurrentTime() < 16 && te.getCurrentTime() % 5 == 0) {
-            te.setPlay(false);
-            te.markDirty();
+            if (blockState.getValue(CYCLE)) {
+                ItemStack stackInSlot = te.getPlayerInv().getStackInSlot(0);
+                if (stackInSlot.isEmpty()) {
+                    return;
+                }
+                ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(stackInSlot);
+                if (songInfo != null) {
+                    te.setPlayToClient(songInfo);
+                }
+            } else {
+                te.setPlay(false);
+                te.markDirty();
+            }
         }
     }
 }

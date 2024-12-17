@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -39,6 +40,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import javax.annotation.Nullable;
 
 public class BlockMusicPlayer extends HorizontalDirectionalBlock implements EntityBlock {
+    public static final BooleanProperty CYCLE = BooleanProperty.create("cycle");
     public static final IClientBlockExtensions CLIENT_BLOCK_EXTENSIONS = FMLEnvironment.dist == Dist.CLIENT ? new IClientBlockExtensions() {
         @Override
         public boolean addHitEffects(BlockState state, Level world, HitResult target, ParticleEngine manager) {
@@ -105,13 +107,14 @@ public class BlockMusicPlayer extends HorizontalDirectionalBlock implements Enti
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
+        builder.add(CYCLE);
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction direction = context.getHorizontalDirection().getOpposite();
-        return this.defaultBlockState().setValue(FACING, direction);
+        return this.defaultBlockState().setValue(FACING, direction).setValue(CYCLE, false);
     }
 
     @Override
