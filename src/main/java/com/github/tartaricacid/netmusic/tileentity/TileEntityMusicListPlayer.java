@@ -155,7 +155,7 @@ public class TileEntityMusicListPlayer extends BlockEntity {
             } else {
                 // Find next non-empty slot
                 int startSlot = te.getCurrentSlot();
-                int slot = startSlot;
+                int slot = (startSlot + 1) % 27;
                 do {
                     ItemStack stackInSlot = te.getPlayerInv().getStackInSlot(slot);
                     if (!stackInSlot.isEmpty()) {
@@ -167,7 +167,7 @@ public class TileEntityMusicListPlayer extends BlockEntity {
                         }
                     }
                     slot = (slot + 1) % 27;
-                } while (slot != startSlot);
+                } while (slot != (startSlot + 1) % 27);
                 
                 // If we get here, no valid songs found
                 te.setPlay(false);
