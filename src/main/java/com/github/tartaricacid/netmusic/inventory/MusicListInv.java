@@ -1,7 +1,7 @@
 package com.github.tartaricacid.netmusic.inventory;
 
 import com.github.tartaricacid.netmusic.init.InitItems;
-import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicPlayer;
+import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicListPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -9,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 
 public class MusicListInv extends ItemStackHandler {
-    private final TileEntityMusicPlayer te;
+    private final TileEntityMusicListPlayer te;
 
-    public MusicListInv(TileEntityMusicPlayer te) {
-        super();
+    public MusicListInv(TileEntityMusicListPlayer te) {
+        super(27);
         this.te = te;
     }
 
@@ -23,7 +23,7 @@ public class MusicListInv extends ItemStackHandler {
 
     @Override
     protected int getStackLimit(int slot, @NotNull ItemStack stack) {
-        return 27;
+        return 1;
     }
 
     @Override

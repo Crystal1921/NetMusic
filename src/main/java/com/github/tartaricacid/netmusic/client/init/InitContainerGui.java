@@ -2,9 +2,11 @@ package com.github.tartaricacid.netmusic.client.init;
 
 import com.github.tartaricacid.netmusic.client.gui.CDBurnerMenuScreen;
 import com.github.tartaricacid.netmusic.client.gui.ComputerMenuScreen;
+import com.github.tartaricacid.netmusic.client.gui.MusicListPlayerMenuScreen;
 import com.github.tartaricacid.netmusic.compat.tlm.init.CompatRegistry;
 import com.github.tartaricacid.netmusic.inventory.CDBurnerMenu;
 import com.github.tartaricacid.netmusic.inventory.ComputerMenu;
+import com.github.tartaricacid.netmusic.inventory.MusicListPlayerMenu;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -16,6 +18,7 @@ public class InitContainerGui {
     public static void clientSetup(RegisterMenuScreensEvent event) {
         event.register(CDBurnerMenu.TYPE, CDBurnerMenuScreen::new);
         event.register(ComputerMenu.TYPE, ComputerMenuScreen::new);
+        event.register(MusicListPlayerMenu.TYPE, MusicListPlayerMenuScreen::new);
         CompatRegistry.initContainerScreen(event);
     }
 }
