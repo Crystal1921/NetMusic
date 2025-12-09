@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class InitDataComponent {
+    @SuppressWarnings("removal")
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(NetMusic.MOD_ID);
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemMusicCD.SongInfo>> SONG_INFO = DATA_COMPONENTS
