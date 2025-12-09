@@ -1,6 +1,5 @@
 package com.github.tartaricacid.netmusic.tileentity;
 
-import com.github.tartaricacid.netmusic.api.lyric.LyricRecord;
 import com.github.tartaricacid.netmusic.block.BlockMusicListPlayer;
 import com.github.tartaricacid.netmusic.init.InitBlocks;
 import com.github.tartaricacid.netmusic.inventory.MusicListInv;
@@ -16,7 +15,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -26,9 +24,8 @@ import javax.annotation.Nullable;
 
 import static com.github.tartaricacid.netmusic.block.BlockMusicListPlayer.CYCLE_DISABLE;
 
-public class TileEntityMusicListPlayer extends BlockEntity {
-    public static final BlockEntityType<TileEntityMusicListPlayer> TYPE = BlockEntityType.Builder.of(TileEntityMusicListPlayer::new, InitBlocks.MUSIC_LIST_PLAYER.get()).build(null);
-    private static final String CD_ITEM_TAG = "ItemStackCD";
+public class TileEntityMusicListPlayer extends AbstractMusicPlayer {
+    private static final String CD_ITEM_TAG = "ItemStackCD";    public static final BlockEntityType<TileEntityMusicListPlayer> TYPE = BlockEntityType.Builder.of(TileEntityMusicListPlayer::new, InitBlocks.MUSIC_LIST_PLAYER.get()).build(null);
     private static final String IS_PLAY_TAG = "IsPlay";
     private static final String CURRENT_TIME_TAG = "CurrentTime";
     private static final String SIGNAL_TAG = "RedStoneSignal";
@@ -38,14 +35,38 @@ public class TileEntityMusicListPlayer extends BlockEntity {
     private int currentTime;
     private boolean hasSignal = false;
     private int currentSlot = 0;
-
-    /**
-     * 仅客户端使用，记录当前音乐的歌词信息，用于渲染歌词
-     */
-    public @Nullable LyricRecord lyricRecord = null;
-
     public TileEntityMusicListPlayer(BlockPos blockPos, BlockState blockState) {
         super(TYPE, blockPos, blockState);
+    }
+
+    public static void tick(Level level, BlockPos blockPos, BlockState blockState, TileEntityMusicListPlayer te) {
+        te.tickTime();
+        if (0 < te.getCurrentTime() && te.getCurrentTime() < 16 && te.getCurrentTime() % 5 == 0) {
+            if (blockState.getValue(CYCLE_DISABLE)) {
+                te.setPlay(false);
+                te.markDirty();
+            } else {
+                // Find next non-empty slot
+                int startSlot = te.getCurrentSlot();
+                int slot = (startSlot + 1) % 27;
+                do {
+                    ItemStack stackInSlot = te.getPlayerInv().getStackInSlot(slot);
+                    if (!stackInSlot.isEmpty()) {
+                        ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(stackInSlot);
+                        if (songInfo != null) {
+                            te.setCurrentSlot(slot);
+                            te.setPlayToClient(songInfo);
+                            return;
+                        }
+                    }
+                    slot = (slot + 1) % 27;
+                } while (slot != (startSlot + 1) % 27);
+
+                // If we get here, no valid songs found
+                te.setPlay(false);
+                te.markDirty();
+            }
+        }
     }
 
     @Override
@@ -116,12 +137,12 @@ public class TileEntityMusicListPlayer extends BlockEntity {
         }
     }
 
-    public void setCurrentTime(int time) {
-        this.currentTime = time;
-    }
-
     public int getCurrentTime() {
         return currentTime;
+    }
+
+    public void setCurrentTime(int time) {
+        this.currentTime = time;
     }
 
     public boolean hasSignal() {
@@ -146,33 +167,5 @@ public class TileEntityMusicListPlayer extends BlockEntity {
         }
     }
 
-    public static void tick(Level level, BlockPos blockPos, BlockState blockState, TileEntityMusicListPlayer te) {
-        te.tickTime();
-        if (0 < te.getCurrentTime() && te.getCurrentTime() < 16 && te.getCurrentTime() % 5 == 0) {
-            if (blockState.getValue(CYCLE_DISABLE)) {
-                te.setPlay(false);
-                te.markDirty();
-            } else {
-                // Find next non-empty slot
-                int startSlot = te.getCurrentSlot();
-                int slot = (startSlot + 1) % 27;
-                do {
-                    ItemStack stackInSlot = te.getPlayerInv().getStackInSlot(slot);
-                    if (!stackInSlot.isEmpty()) {
-                        ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(stackInSlot);
-                        if (songInfo != null) {
-                            te.setCurrentSlot(slot);
-                            te.setPlayToClient(songInfo);
-                            return;
-                        }
-                    }
-                    slot = (slot + 1) % 27;
-                } while (slot != (startSlot + 1) % 27);
-                
-                // If we get here, no valid songs found
-                te.setPlay(false);
-                te.markDirty();
-            }
-        }
-    }
+
 }

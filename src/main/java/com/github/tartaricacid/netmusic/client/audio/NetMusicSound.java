@@ -2,6 +2,7 @@ package com.github.tartaricacid.netmusic.client.audio;
 
 import com.github.tartaricacid.netmusic.api.lyric.LyricRecord;
 import com.github.tartaricacid.netmusic.init.InitSounds;
+import com.github.tartaricacid.netmusic.tileentity.AbstractMusicPlayer;
 import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicPlayer;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -73,7 +74,7 @@ public class NetMusicSound extends AbstractTickableSoundInstance {
         }
 
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof TileEntityMusicPlayer musicPlay) {
+        if (te instanceof AbstractMusicPlayer musicPlay) {
             if (!musicPlay.isPlay()) {
                 musicPlay.lyricRecord = null;
                 this.stop();
