@@ -1,6 +1,7 @@
 package com.github.tartaricacid.netmusic.client.gui.menu;
 
 import com.github.tartaricacid.netmusic.init.InitItems;
+import com.github.tartaricacid.netmusic.item.ItemMusicCD;
 import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicListPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,10 +20,12 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
     private final IItemHandler itemHandler;
     private final ContainerLevelAccess access;
     private final ContainerData data;
+    private final TileEntityMusicListPlayer tileEntity;
 
     public MusicListPlayerMenu(int id, Inventory playerInventory, FriendlyByteBuf buf) {
         super(TYPE, id);
         TileEntityMusicListPlayer musicListPlayer = (TileEntityMusicListPlayer) playerInventory.player.level().getBlockEntity(buf.readBlockPos());
+        this.tileEntity = musicListPlayer;
         this.itemHandler = musicListPlayer.getPlayerInv();
         this.access = ContainerLevelAccess.NULL;
         this.data = musicListPlayer.dataAccess;
@@ -55,6 +58,8 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
 
     public MusicListPlayerMenu(int id, Inventory playerInventory, IItemHandler itemHandler, BlockPos blockPos, ContainerData data) {
         super(TYPE, id);
+        TileEntityMusicListPlayer musicListPlayer = (TileEntityMusicListPlayer) playerInventory.player.level().getBlockEntity(blockPos);
+        this.tileEntity = musicListPlayer;
         this.itemHandler = itemHandler;
         this.access = ContainerLevelAccess.NULL;
         this.data = data;
@@ -98,6 +103,19 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
                 int currentSlot = this.data.get(0);
                 currentSlot = (currentSlot + 1) % 27;
                 this.data.set(0, currentSlot);
+            }
+            case 2 -> {
+                tileEntity.setPlay(false);
+                tileEntity.markDirty();
+            }
+            case 3 -> {
+                ItemStack stackInSlot = this.itemHandler.getStackInSlot(data.get(0));
+                ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(stackInSlot);
+                if (songInfo != null) {
+                    tileEntity.setPlayToClient(songInfo);
+                    tileEntity.setPlay(true);
+                    tileEntity.markDirty();
+                }
             }
         }
         return true;

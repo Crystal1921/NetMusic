@@ -163,14 +163,6 @@ public class TileEntityMusicListPlayer extends AbstractMusicPlayer {
         this.currentTime = time;
     }
 
-    public boolean hasSignal() {
-        return hasSignal;
-    }
-
-    public void setSignal(boolean signal) {
-        this.hasSignal = signal;
-    }
-
     public int getCurrentSlot() {
         return currentSlot;
     }

@@ -1,10 +1,8 @@
 package com.github.tartaricacid.netmusic.block;
 
 import com.github.tartaricacid.netmusic.client.gui.menu.MusicListPlayerMenu;
-import com.github.tartaricacid.netmusic.item.ItemMusicCD;
 import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicListPlayer;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
@@ -38,7 +36,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
-import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 
@@ -101,36 +98,6 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
     }
 
-    private static void playerMusic(Level level, BlockPos blockPos, boolean signal) {
-        BlockEntity blockEntity = level.getBlockEntity(blockPos);
-        if (blockEntity instanceof TileEntityMusicListPlayer player) {
-            if (signal != player.hasSignal()) {
-                if (signal) {
-                    if (player.isPlay()) {
-                        player.setPlay(false);
-                        player.setSignal(signal);
-                        player.markDirty();
-                        return;
-                    }
-                    // Find first non-empty slot
-                    for (int i = 0; i < 27; i++) {
-                        ItemStack stackInSlot = player.getPlayerInv().getStackInSlot(i);
-                        if (!stackInSlot.isEmpty()) {
-                            ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(stackInSlot);
-                            if (songInfo != null) {
-                                player.setCurrentSlot(i);
-                                player.setPlayToClient(songInfo);
-                                break;
-                            }
-                        }
-                    }
-                }
-                player.setSignal(signal);
-                player.markDirty();
-            }
-        }
-    }
-
     @Nullable
     protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> entityType, BlockEntityType<E> type, BlockEntityTicker<? super E> ticker) {
         return type == entityType ? (BlockEntityTicker<A>) ticker : null;
@@ -178,11 +145,6 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos blockPos, Block block, BlockPos fromPos, boolean isMoving) {
-        playerMusic(level, blockPos, level.hasNeighborSignal(blockPos));
-    }
-
-    @Override
     public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit) {
         if (hand == InteractionHand.OFF_HAND) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -194,63 +156,12 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
         }
 
         // If player is sneaking, open GUI
-        if (playerIn.isShiftKeyDown()) {
-            if (!worldIn.isClientSide) {
-                playerIn.openMenu(state.getMenuProvider(worldIn, pos), (buf) -> buf.writeBlockPos(pos));
-            }
-            return ItemInteractionResult.SUCCESS;
-        }
-
-        // If holding a music CD, insert it
-        ItemMusicCD.SongInfo info = ItemMusicCD.getSongInfo(stack);
-        if (info != null) {
-            if (info.vip) {
-                if (worldIn.isClientSide) {
-                    playerIn.sendSystemMessage(Component.translatable("message.netmusic.music_player.need_vip").withStyle(ChatFormatting.RED));
-                }
-                return ItemInteractionResult.FAIL;
-            }
-
-            IItemHandler handler = musicPlayer.getPlayerInv();
-            // Find first empty slot
-            for (int i = 0; i < 27; i++) {
-                ItemStack slotStack = handler.getStackInSlot(i);
-                if (slotStack.isEmpty()) {
-                    handler.insertItem(i, stack.copy(), false);
-                    if (!playerIn.isCreative()) {
-                        stack.shrink(1);
-                    }
-
-                    // If not playing, start playing this song
-                    if (!musicPlayer.isPlay()) {
-                        musicPlayer.setCurrentSlot(i);
-                        musicPlayer.setPlayToClient(info);
-                    }
-                    musicPlayer.markDirty();
-                    return ItemInteractionResult.SUCCESS;
-                }
-            }
-            // Inventory full
-            if (worldIn.isClientSide) {
-                playerIn.sendSystemMessage(Component.translatable("message.netmusic.music_list_player.full").withStyle(ChatFormatting.RED));
-            }
-            return ItemInteractionResult.FAIL;
-        }
-
-        // If not holding a CD, extract from current slot
-        int currentSlot = musicPlayer.getCurrentSlot();
-        IItemHandler handler = musicPlayer.getPlayerInv();
-        if (!handler.getStackInSlot(currentSlot).isEmpty()) {
-            ItemStack extract = handler.extractItem(currentSlot, 1, false);
-            popResource(worldIn, pos, extract);
-            return ItemInteractionResult.SUCCESS;
-        }
-
-        // Open GUI if no item in hand
         if (!worldIn.isClientSide) {
             playerIn.openMenu(state.getMenuProvider(worldIn, pos), (buf) -> buf.writeBlockPos(pos));
         }
         return ItemInteractionResult.SUCCESS;
+
+        // Open GUI if no item in hand
     }
 
     @Nullable

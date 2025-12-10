@@ -9,11 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 
 public class MusicListInv extends ItemStackHandler {
-    private final TileEntityMusicListPlayer te;
 
     public MusicListInv(TileEntityMusicListPlayer te) {
         super(27);
-        this.te = te;
     }
 
     @Override
@@ -24,15 +22,5 @@ public class MusicListInv extends ItemStackHandler {
     @Override
     protected int getStackLimit(int slot, @NotNull ItemStack stack) {
         return 1;
-    }
-
-    @Override
-    protected void onContentsChanged(int slot) {
-        ItemStack stackInSlot = getStackInSlot(slot);
-        if (stackInSlot.isEmpty()) {
-            te.setPlay(false);
-            te.setCurrentTime(0);
-        }
-        te.markDirty();
     }
 }
