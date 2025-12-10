@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -35,6 +36,23 @@ public class TileEntityMusicListPlayer extends AbstractMusicPlayer {
     private int currentTime;
     private boolean hasSignal = false;
     private int currentSlot = 0;
+    public final ContainerData dataAccess = new ContainerData() {
+        @Override
+        public int get(int index) {
+            return TileEntityMusicListPlayer.this.currentSlot;
+        }
+
+        @Override
+        public void set(int index, int value) {
+            TileEntityMusicListPlayer.this.currentSlot = value;
+        }
+
+        @Override
+        public int getCount() {
+            return 1;
+        }
+    };
+
     public TileEntityMusicListPlayer(BlockPos blockPos, BlockState blockState) {
         super(TYPE, blockPos, blockState);
     }

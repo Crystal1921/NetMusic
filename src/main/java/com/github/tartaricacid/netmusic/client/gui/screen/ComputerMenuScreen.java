@@ -1,7 +1,7 @@
-package com.github.tartaricacid.netmusic.client.gui;
+package com.github.tartaricacid.netmusic.client.gui.screen;
 
 import com.github.tartaricacid.netmusic.NetMusic;
-import com.github.tartaricacid.netmusic.inventory.ComputerMenu;
+import com.github.tartaricacid.netmusic.client.gui.menu.ComputerMenu;
 import com.github.tartaricacid.netmusic.item.ItemMusicCD;
 import com.github.tartaricacid.netmusic.network.NetworkHandler;
 import com.github.tartaricacid.netmusic.network.message.SetMusicIDMessage;

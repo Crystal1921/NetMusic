@@ -1,9 +1,9 @@
 package com.github.tartaricacid.netmusic.init;
 
 import com.github.tartaricacid.netmusic.NetMusic;
-import com.github.tartaricacid.netmusic.inventory.CDBurnerMenu;
-import com.github.tartaricacid.netmusic.inventory.ComputerMenu;
-import com.github.tartaricacid.netmusic.inventory.MusicListPlayerMenu;
+import com.github.tartaricacid.netmusic.client.gui.menu.CDBurnerMenu;
+import com.github.tartaricacid.netmusic.client.gui.menu.ComputerMenu;
+import com.github.tartaricacid.netmusic.client.gui.menu.MusicListPlayerMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.registries.DeferredRegister;

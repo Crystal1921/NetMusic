@@ -1,4 +1,4 @@
-package com.github.tartaricacid.netmusic.inventory;
+package com.github.tartaricacid.netmusic.client.gui.menu;
 
 import com.github.tartaricacid.netmusic.init.InitItems;
 import com.github.tartaricacid.netmusic.item.ItemMusicCD;
@@ -14,8 +14,8 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-public class CDBurnerMenu extends AbstractContainerMenu {
-    public static final MenuType<CDBurnerMenu> TYPE = IMenuTypeExtension.create((windowId, inv, data) -> new CDBurnerMenu(windowId, inv));
+public class ComputerMenu extends AbstractContainerMenu {
+    public static final MenuType<ComputerMenu> TYPE = IMenuTypeExtension.create((windowId, inv, data) -> new ComputerMenu(windowId, inv));
     private final ItemStackHandler input = new ItemStackHandler() {
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
@@ -35,19 +35,19 @@ public class CDBurnerMenu extends AbstractContainerMenu {
     };
     private ItemMusicCD.SongInfo songInfo;
 
-    public CDBurnerMenu(int id, Inventory inventory) {
+    public ComputerMenu(int id, Inventory inventory) {
         super(TYPE, id);
 
         this.addSlot(new SlotItemHandler(input, 0, 147, 14));
-        this.addSlot(new SlotItemHandler(output, 0, 147, 67));
+        this.addSlot(new SlotItemHandler(output, 0, 147, 79));
 
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(inventory, i, 8 + i * 18, 152));
+            this.addSlot(new Slot(inventory, i, 8 + i * 18, 192));
         }
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 94 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 134 + i * 18));
             }
         }
     }

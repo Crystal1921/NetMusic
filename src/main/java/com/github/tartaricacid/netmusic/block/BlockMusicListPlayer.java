@@ -1,5 +1,6 @@
 package com.github.tartaricacid.netmusic.block;
 
+import com.github.tartaricacid.netmusic.client.gui.menu.MusicListPlayerMenu;
 import com.github.tartaricacid.netmusic.item.ItemMusicCD;
 import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicListPlayer;
 import com.mojang.serialization.MapCodec;
@@ -16,7 +17,6 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -101,6 +101,41 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
     }
 
+    private static void playerMusic(Level level, BlockPos blockPos, boolean signal) {
+        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+        if (blockEntity instanceof TileEntityMusicListPlayer player) {
+            if (signal != player.hasSignal()) {
+                if (signal) {
+                    if (player.isPlay()) {
+                        player.setPlay(false);
+                        player.setSignal(signal);
+                        player.markDirty();
+                        return;
+                    }
+                    // Find first non-empty slot
+                    for (int i = 0; i < 27; i++) {
+                        ItemStack stackInSlot = player.getPlayerInv().getStackInSlot(i);
+                        if (!stackInSlot.isEmpty()) {
+                            ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(stackInSlot);
+                            if (songInfo != null) {
+                                player.setCurrentSlot(i);
+                                player.setPlayToClient(songInfo);
+                                break;
+                            }
+                        }
+                    }
+                }
+                player.setSignal(signal);
+                player.markDirty();
+            }
+        }
+    }
+
+    @Nullable
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> entityType, BlockEntityType<E> type, BlockEntityTicker<? super E> ticker) {
+        return type == entityType ? (BlockEntityTicker<A>) ticker : null;
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
@@ -147,36 +182,6 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
         playerMusic(level, blockPos, level.hasNeighborSignal(blockPos));
     }
 
-    private static void playerMusic(Level level, BlockPos blockPos, boolean signal) {
-        BlockEntity blockEntity = level.getBlockEntity(blockPos);
-        if (blockEntity instanceof TileEntityMusicListPlayer player) {
-            if (signal != player.hasSignal()) {
-                if (signal) {
-                    if (player.isPlay()) {
-                        player.setPlay(false);
-                        player.setSignal(signal);
-                        player.markDirty();
-                        return;
-                    }
-                    // Find first non-empty slot
-                    for (int i = 0; i < 27; i++) {
-                        ItemStack stackInSlot = player.getPlayerInv().getStackInSlot(i);
-                        if (!stackInSlot.isEmpty()) {
-                            ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(stackInSlot);
-                            if (songInfo != null) {
-                                player.setCurrentSlot(i);
-                                player.setPlayToClient(songInfo);
-                                break;
-                            }
-                        }
-                    }
-                }
-                player.setSignal(signal);
-                player.markDirty();
-            }
-        }
-    }
-
     @Override
     public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit) {
         if (hand == InteractionHand.OFF_HAND) {
@@ -184,16 +189,14 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
         }
 
         BlockEntity te = worldIn.getBlockEntity(pos);
-        if (!(te instanceof TileEntityMusicListPlayer)) {
+        if (!(te instanceof TileEntityMusicListPlayer musicPlayer)) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
 
-        TileEntityMusicListPlayer musicPlayer = (TileEntityMusicListPlayer) te;
-        
         // If player is sneaking, open GUI
         if (playerIn.isShiftKeyDown()) {
             if (!worldIn.isClientSide) {
-                playerIn.openMenu(state.getMenuProvider(worldIn, pos));
+                playerIn.openMenu(state.getMenuProvider(worldIn, pos), (buf) -> buf.writeBlockPos(pos));
             }
             return ItemInteractionResult.SUCCESS;
         }
@@ -207,7 +210,7 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
                 }
                 return ItemInteractionResult.FAIL;
             }
-            
+
             IItemHandler handler = musicPlayer.getPlayerInv();
             // Find first empty slot
             for (int i = 0; i < 27; i++) {
@@ -217,7 +220,7 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
                     if (!playerIn.isCreative()) {
                         stack.shrink(1);
                     }
-                    
+
                     // If not playing, start playing this song
                     if (!musicPlayer.isPlay()) {
                         musicPlayer.setCurrentSlot(i);
@@ -242,10 +245,10 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
             popResource(worldIn, pos, extract);
             return ItemInteractionResult.SUCCESS;
         }
-        
+
         // Open GUI if no item in hand
         if (!worldIn.isClientSide) {
-            playerIn.openMenu(state.getMenuProvider(worldIn, pos));
+            playerIn.openMenu(state.getMenuProvider(worldIn, pos), (buf) -> buf.writeBlockPos(pos));
         }
         return ItemInteractionResult.SUCCESS;
     }
@@ -257,8 +260,7 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
                 (containerId, playerInventory, player) -> {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     if (blockEntity instanceof TileEntityMusicListPlayer te) {
-                        return new com.github.tartaricacid.netmusic.inventory.MusicListPlayerMenu(
-                                containerId, playerInventory, te.getPlayerInv(), ContainerLevelAccess.create(level, pos));
+                        return new MusicListPlayerMenu(containerId, playerInventory, te.getPlayerInv(), pos, te.dataAccess);
                     }
                     return null;
                 },
@@ -269,8 +271,7 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
     @Override
     public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         BlockEntity te = worldIn.getBlockEntity(pos);
-        if (te instanceof TileEntityMusicListPlayer) {
-            TileEntityMusicListPlayer musicPlayer = (TileEntityMusicListPlayer) te;
+        if (te instanceof TileEntityMusicListPlayer musicPlayer) {
             for (int i = 0; i < 27; i++) {
                 ItemStack stack = musicPlayer.getPlayerInv().getStackInSlot(i);
                 if (!stack.isEmpty()) {
@@ -285,11 +286,6 @@ public class BlockMusicListPlayer extends HorizontalDirectionalBlock implements 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> entityType) {
         return !level.isClientSide ? createTickerHelper(entityType, TileEntityMusicListPlayer.TYPE, TileEntityMusicListPlayer::tick) : null;
-    }
-
-    @Nullable
-    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> entityType, BlockEntityType<E> type, BlockEntityTicker<? super E> ticker) {
-        return type == entityType ? (BlockEntityTicker<A>) ticker : null;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.github.tartaricacid.netmusic.network.message;
 
 import com.github.tartaricacid.netmusic.NetMusic;
-import com.github.tartaricacid.netmusic.inventory.CDBurnerMenu;
-import com.github.tartaricacid.netmusic.inventory.ComputerMenu;
+import com.github.tartaricacid.netmusic.client.gui.menu.CDBurnerMenu;
+import com.github.tartaricacid.netmusic.client.gui.menu.ComputerMenu;
 import com.github.tartaricacid.netmusic.item.ItemMusicCD;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;

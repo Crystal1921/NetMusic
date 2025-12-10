@@ -1,6 +1,6 @@
 package com.github.tartaricacid.netmusic.block;
 
-import com.github.tartaricacid.netmusic.inventory.CDBurnerMenu;
+import com.github.tartaricacid.netmusic.client.gui.menu.CDBurnerMenu;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
