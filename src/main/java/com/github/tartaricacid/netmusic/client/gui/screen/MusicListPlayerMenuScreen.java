@@ -1,8 +1,10 @@
 package com.github.tartaricacid.netmusic.client.gui.screen;
 
 import com.github.tartaricacid.netmusic.client.gui.menu.MusicListPlayerMenu;
+import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicListPlayer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -32,7 +34,7 @@ public class MusicListPlayerMenuScreen extends AbstractContainerScreen<MusicList
         super.init();
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
-        int startX = this.width / 2 - 60;
+        int startX = this.width / 2 - 90;
         int startY = j - 20;
         this.addRenderableWidget(Button.builder(Component.literal("<"), b -> clickButton(0))
                 .size(15, 20).pos(startX , startY)
@@ -44,9 +46,17 @@ public class MusicListPlayerMenuScreen extends AbstractContainerScreen<MusicList
                 .build());
 
         this.addRenderableWidget(Button.builder(Component.translatable("gui.netmusic.maid.music_player_backpack.stop"), b -> this.clickButton(2))
-                .size(36, 20).pos(startX  + BUTTON_WIDTH * 3, startY).build());
+                .size(BUTTON_WIDTH * 2, 20).pos(startX  + BUTTON_WIDTH * 2, startY).build());
         this.addRenderableWidget(Button.builder(Component.translatable("gui.netmusic.maid.music_player_backpack.play"), b -> this.clickButton(3))
-                .size(36, 20).pos(startX  + BUTTON_WIDTH * 6, startY).build());
+                .size(BUTTON_WIDTH * 2, 20).pos(startX  + BUTTON_WIDTH * 4, startY).build());
+
+        this.addRenderableWidget(CycleButton.<TileEntityMusicListPlayer.CycleMode>builder((mode) ->Component.translatable("gui.netmusic.list_mode." + mode.name().toLowerCase()))
+                .withValues(TileEntityMusicListPlayer.CycleMode.values())
+                .withInitialValue(this.menu.getTileEntity().getCycleMode())
+                .create(startX  + BUTTON_WIDTH * 6, startY, 80, 20, Component.translatable("gui.netmusic.list_mode")
+                , (button, mode) -> {
+                            this.clickButton(4 + mode.ordinal());
+                        }));
     }
 
     private void clickButton(int id) {

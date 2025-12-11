@@ -15,13 +15,10 @@ import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class MusicListPlayerMenu extends AbstractContainerMenu {
-    public static final MenuType<MusicListPlayerMenu> TYPE = IMenuTypeExtension.create(MusicListPlayerMenu::new);
-    
-    private final IItemHandler itemHandler;
+    private final IItemHandler itemHandler;    public static final MenuType<MusicListPlayerMenu> TYPE = IMenuTypeExtension.create(MusicListPlayerMenu::new);
     private final ContainerLevelAccess access;
     private final ContainerData data;
     private final TileEntityMusicListPlayer tileEntity;
-
     public MusicListPlayerMenu(int id, Inventory playerInventory, FriendlyByteBuf buf) {
         super(TYPE, id);
         TileEntityMusicListPlayer musicListPlayer = (TileEntityMusicListPlayer) playerInventory.player.level().getBlockEntity(buf.readBlockPos());
@@ -92,6 +89,7 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        // Control buttons
         switch (id) {
             case 0 -> {
                 int currentSlot = this.data.get(0);
@@ -118,6 +116,14 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
                 }
             }
         }
+
+        // Cycle mode buttons
+        if (id >= 4 && id <= 4 + TileEntityMusicListPlayer.CycleMode.values().length - 1) {
+            TileEntityMusicListPlayer.CycleMode mode = TileEntityMusicListPlayer.CycleMode.values()[id - 4];
+            tileEntity.setCycleMode(mode);
+            tileEntity.markDirty();
+
+        }
         return true;
     }
 
@@ -125,18 +131,18 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
     public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        
+
         if (slot.hasItem()) {
             ItemStack slotItem = slot.getItem();
             itemStack = slotItem.copy();
-            
+
             // If clicking on container slots (0-26)
             if (index < 27) {
                 // Try to move to player inventory
                 if (!this.moveItemStackTo(slotItem, 27, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } 
+            }
             // If clicking on player inventory
             else {
                 // Try to move to container slots
@@ -168,4 +174,10 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
     public ContainerData getData() {
         return data;
     }
+
+    public TileEntityMusicListPlayer getTileEntity() {
+        return tileEntity;
+    }
+
+
 }
