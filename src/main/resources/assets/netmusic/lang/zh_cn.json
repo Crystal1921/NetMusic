@@ -55,6 +55,7 @@
   "gui.netmusic.list_mode.random": "随机播放",
   "gui.netmusic.list_mode.disable": "禁用",
   "gui.netmusic.list_mode": "模式",
+  "gui.netmusic.jump_slot": "跳转到",
   "config.netmusic.general": "通用设置",
   "config.netmusic.general.enable_stereo": "启用立体声",
   "config.netmusic.general.enable_stereo.tooltip": "是否启用立体声效果",

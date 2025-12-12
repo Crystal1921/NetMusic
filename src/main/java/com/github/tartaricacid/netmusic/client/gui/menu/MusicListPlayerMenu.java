@@ -35,8 +35,7 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
 
     public MusicListPlayerMenu(int id, Inventory playerInventory, IItemHandler itemHandler, BlockPos blockPos, ContainerData data) {
         super(TYPE, id);
-        TileEntityMusicListPlayer musicListPlayer = (TileEntityMusicListPlayer) playerInventory.player.level().getBlockEntity(blockPos);
-        this.tileEntity = musicListPlayer;
+        this.tileEntity = (TileEntityMusicListPlayer) playerInventory.player.level().getBlockEntity(blockPos);
         this.itemHandler = itemHandler;
         this.access = ContainerLevelAccess.NULL;
         this.data = data;

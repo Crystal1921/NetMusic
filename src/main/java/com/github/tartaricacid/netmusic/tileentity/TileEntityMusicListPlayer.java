@@ -54,7 +54,7 @@ public class TileEntityMusicListPlayer extends AbstractMusicPlayer {
             return 1;
         }
     };
-    private CycleMode cycleMode;
+    private CycleMode cycleMode = CycleMode.SINGLE;
     public TileEntityMusicListPlayer(BlockPos blockPos, BlockState blockState) {
         super(TYPE, blockPos, blockState);
     }

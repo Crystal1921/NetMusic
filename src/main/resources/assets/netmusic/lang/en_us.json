@@ -55,6 +55,7 @@
   "gui.netmusic.list_mode.random": "Random Play",
   "gui.netmusic.list_mode.disable": "Disable",
   "gui.netmusic.list_mode": "Mode",
+  "gui.netmusic.jump_slot": "Jump to",
   "config.netmusic.general": "General Settings",
   "config.netmusic.general.enable_stereo": "Enable Stereo",
   "config.netmusic.general.enable_stereo.tooltip": "Whether stereo playback is enabled",

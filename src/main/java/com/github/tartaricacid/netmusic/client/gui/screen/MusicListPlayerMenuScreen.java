@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -32,6 +33,7 @@ public class MusicListPlayerMenuScreen extends AbstractContainerScreen<MusicList
     private static final ResourceLocation CONTAINER_BACKGROUND = ResourceLocation.withDefaultNamespace("textures/gui/container/generic_54.png");
     private static final int BUTTON_WIDTH = 15;
     private static final int BUTTON_HEIGHT = 20;
+    private EditBox slotBox;
 
     public MusicListPlayerMenuScreen(MusicListPlayerMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -103,6 +105,21 @@ public class MusicListPlayerMenuScreen extends AbstractContainerScreen<MusicList
                         , (button, mode) -> {
                             this.clickButton(4 + mode.ordinal());
                         }));
+
+        this.slotBox = new EditBox(this.font, startX - BUTTON_WIDTH * 2, startY, BUTTON_WIDTH * 2, 20, Component.translatable("gui.netmusic.slot_input"));
+        this.addRenderableWidget(slotBox);
+
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.netmusic.jump_slot"), b -> {
+            String text = slotBox.getValue();
+            if (StringUtils.isNumeric(text)) {
+                int slot = Integer.parseInt(text) - 1;
+                if (slot >= 0 && slot < 27) {
+                    this.menu.getData().set(0, slot);
+                    this.menu.getTileEntity().setPlay(false);
+                    this.menu.getTileEntity().markDirty();
+                }
+            }
+        }).size(BUTTON_WIDTH * 2, 20).pos(startX - BUTTON_WIDTH* 2, startY + 20).build());
     }
 
     private void clickButton(int id) {
