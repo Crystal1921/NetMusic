@@ -1,5 +1,6 @@
 package com.github.tartaricacid.netmusic.client.gui.menu;
 
+import com.github.tartaricacid.netmusic.client.gui.screen.MusicListPlayerMenuScreen;
 import com.github.tartaricacid.netmusic.init.InitItems;
 import com.github.tartaricacid.netmusic.item.ItemMusicCD;
 import com.github.tartaricacid.netmusic.tileentity.TileEntityMusicListPlayer;
@@ -29,28 +30,7 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
         this.addDataSlots(this.data);
 
         // Add 27 slots for music CDs (3 rows of 9)
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                this.addSlot(new SlotItemHandler(itemHandler, col + row * 9, 8 + col * 18, 18 + row * 18) {
-                    @Override
-                    public boolean mayPlace(@NotNull ItemStack stack) {
-                        return stack.getItem() == InitItems.MUSIC_CD.get();
-                    }
-                });
-            }
-        }
-
-        // Player inventory (3 rows of 9)
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
-            }
-        }
-
-        // Player hotbar (1 row of 9)
-        for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
-        }
+        addInventory(playerInventory, itemHandler);
     }
 
     public MusicListPlayerMenu(int id, Inventory playerInventory, IItemHandler itemHandler, BlockPos blockPos, ContainerData data) {
@@ -62,10 +42,15 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
         this.data = data;
         this.addDataSlots(this.data);
 
+        addInventory(playerInventory, itemHandler);
+    }
+
+    private void addInventory(Inventory playerInventory, IItemHandler itemHandler) {
         // Add 27 slots for music CDs (3 rows of 9)
+        int startY = 18 + MusicListPlayerMenuScreen.Y_OFFSET;
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                this.addSlot(new SlotItemHandler(itemHandler, col + row * 9, 8 + col * 18, 18 + row * 18) {
+                this.addSlot(new SlotItemHandler(itemHandler, col + row * 9, 8 + col * 18, startY + row * 18) {
                     @Override
                     public boolean mayPlace(@NotNull ItemStack stack) {
                         return stack.getItem() == InitItems.MUSIC_CD.get();
@@ -77,13 +62,13 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
         // Player inventory (3 rows of 9)
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, startY + 67 + row * 18));
             }
         }
 
         // Player hotbar (1 row of 9)
         for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
+            this.addSlot(new Slot(playerInventory, col, 8 + col * 18, startY + 125));
         }
     }
 
@@ -95,18 +80,23 @@ public class MusicListPlayerMenu extends AbstractContainerMenu {
                 int currentSlot = this.data.get(0);
                 currentSlot = (currentSlot - 1 + 27) % 27;
                 this.data.set(0, currentSlot);
+                tileEntity.setPlay(false);
+                tileEntity.markDirty();
             }
 
             case 1 -> {
                 int currentSlot = this.data.get(0);
                 currentSlot = (currentSlot + 1) % 27;
                 this.data.set(0, currentSlot);
+                tileEntity.setPlay(false);
+                tileEntity.markDirty();
             }
             case 2 -> {
                 tileEntity.setPlay(false);
                 tileEntity.markDirty();
             }
             case 3 -> {
+                if (tileEntity.isPlay()) {return true;}
                 ItemStack stackInSlot = this.itemHandler.getStackInSlot(data.get(0));
                 ItemMusicCD.SongInfo songInfo = ItemMusicCD.getSongInfo(stackInSlot);
                 if (songInfo != null) {
